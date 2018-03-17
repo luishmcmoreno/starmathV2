@@ -13,10 +13,6 @@ export class SelectLevelPage {
     private navParams: NavParams) {
   }
 
-  private changeAstronautPosition(): void {
-    // Use it to transition the astronaut
-  }
-
   ionViewDidLoad() {}
 
 }
