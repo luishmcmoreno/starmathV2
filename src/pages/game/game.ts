@@ -108,16 +108,16 @@ export class GamePage {
       },
 
       carregaRecursos: function () {
-        this.load.image('cenario', 'assets/game-resources/imagens/cenario.png');
-        this.load.image('navinha', 'assets/game-resources/imagens/navinha.png');
-        this.load.image('umTiro', 'assets/game-resources/imagens/tiro.png');
-        this.load.image('meteoro', 'assets/game-resources/imagens/meteoro.png');
-        this.load.image('coracao', 'assets/game-resources/imagens/coracao.png');
-        this.load.image('explosao', 'assets/game-resources/imagens/explosao.png');
+        this.load.image('cenario', 'assets/game-resources/img/cenario.png');
+        this.load.image('navinha', 'assets/game-resources/img/navinha.png');
+        this.load.image('umTiro', 'assets/game-resources/img/tiro.png');
+        this.load.image('meteoro', 'assets/game-resources/img/meteoro.png');
+        this.load.image('coracao', 'assets/game-resources/img/coracao.png');
+        this.load.image('explosao', 'assets/game-resources/img/explosao.png');
 
-        this.load.image('botaoEsquerda', 'assets/game-resources/imagens/esquerda.png');
-        this.load.image('botaoDireita', 'assets/game-resources/imagens/direita.png');
-        this.load.image('botaoAtira', 'assets/game-resources/imagens/atira.png');
+        this.load.image('botaoEsquerda', 'assets/game-resources/img/esquerda.png');
+        this.load.image('botaoDireita', 'assets/game-resources/img/direita.png');
+        this.load.image('botaoAtira', 'assets/game-resources/img/atira.png');
 
         this.load.audio('somTiro', 'assets/game-resources/audio/somTiro.ogg');
         this.load.audio('somRespostaCerta', 'assets/game-resources/audio/somRespostaCerta.ogg');
