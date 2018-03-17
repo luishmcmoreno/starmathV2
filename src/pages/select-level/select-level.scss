@@ -1,3 +1,30 @@
 page-select-level {
+  ion-content {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-color: transparent;
+  }
 
+  .astronaut {
+    position: absolute;
+    top: 100px;
+    right: 30px;
+  }
+
+  .btn-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+
+  .btn-level {
+    padding: 40px 0px;
+    text-align: center;
+    text-transform: uppercase;
+    max-height: 100px;
+    margin: 5px;
+    border-radius: 17px;
+  }
 }

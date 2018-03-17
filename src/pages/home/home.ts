@@ -1,13 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-/**
- * Generated class for the HomePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
   selector: 'page-home',
@@ -15,11 +8,21 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  public leavingPage: boolean = false;
+
+  constructor(
+    private navCtrl: NavController,
+    private navParams: NavParams
+  ) {}
+
+  public async goSelectLevel(): Promise<void> {
+    this.leavingPage = true;
+    window.setTimeout(() => {
+      this.navCtrl.setRoot('SelectLevelPage')
+        .then(() => this.leavingPage = false);      
+    }, 800);
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad HomePage');
-  }
+  ionViewDidLoad() {}
 
 }

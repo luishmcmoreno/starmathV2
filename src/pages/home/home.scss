@@ -31,5 +31,14 @@ page-home {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 15px 0px;
     margin-bottom: 30px;
+    animation-duration: 3s;
+  }
+
+  .leaving {
+    animation-duration: 1.5s;
+  }
+
+  .btn-play {
+    animation-duration: 2s;
   }
 }
