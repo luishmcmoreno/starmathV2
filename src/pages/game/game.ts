@@ -108,24 +108,24 @@ export class GamePage {
       },
 
       carregaRecursos: function () {
-        this.load.image('cenario', 'recursos/imagens/cenario.png');
-        this.load.image('navinha', 'recursos/imagens/navinha.png');
-        this.load.image('umTiro', 'recursos/imagens/tiro.png');
-        this.load.image('meteoro', 'recursos/imagens/meteoro.png');
-        this.load.image('coracao', 'recursos/imagens/coracao.png');
-        this.load.image('explosao', 'recursos/imagens/explosao.png');
+        this.load.image('cenario', 'assets/game-resources/imagens/cenario.png');
+        this.load.image('navinha', 'assets/game-resources/imagens/navinha.png');
+        this.load.image('umTiro', 'assets/game-resources/imagens/tiro.png');
+        this.load.image('meteoro', 'assets/game-resources/imagens/meteoro.png');
+        this.load.image('coracao', 'assets/game-resources/imagens/coracao.png');
+        this.load.image('explosao', 'assets/game-resources/imagens/explosao.png');
 
-        this.load.image('botaoEsquerda', 'recursos/imagens/esquerda.png');
-        this.load.image('botaoDireita', 'recursos/imagens/direita.png');
-        this.load.image('botaoAtira', 'recursos/imagens/atira.png');
+        this.load.image('botaoEsquerda', 'assets/game-resources/imagens/esquerda.png');
+        this.load.image('botaoDireita', 'assets/game-resources/imagens/direita.png');
+        this.load.image('botaoAtira', 'assets/game-resources/imagens/atira.png');
 
-        this.load.audio('somTiro', 'recursos/audio/somTiro.ogg');
-        this.load.audio('somRespostaCerta', 'recursos/audio/somRespostaCerta.ogg');
-        this.load.audio('somRespostaErrada', 'recursos/audio/somRespostaErrada.ogg');
-        this.load.audio('somGameOver', 'recursos/audio/somGameOver.ogg');
-        this.load.audio('somTema', 'recursos/audio/somTema.ogg');
-        this.load.audio('somVitoria', 'recursos/audio/somVitoria.ogg');
-        this.load.audio('somExplosao', 'recursos/audio/somExplosao.ogg');
+        this.load.audio('somTiro', 'assets/game-resources/audio/somTiro.ogg');
+        this.load.audio('somRespostaCerta', 'assets/game-resources/audio/somRespostaCerta.ogg');
+        this.load.audio('somRespostaErrada', 'assets/game-resources/audio/somRespostaErrada.ogg');
+        this.load.audio('somGameOver', 'assets/game-resources/audio/somGameOver.ogg');
+        this.load.audio('somTema', 'assets/game-resources/audio/somTema.ogg');
+        this.load.audio('somVitoria', 'assets/game-resources/audio/somVitoria.ogg');
+        this.load.audio('somExplosao', 'assets/game-resources/audio/somExplosao.ogg');
       },
 
 
