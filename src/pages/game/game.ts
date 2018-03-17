@@ -16,7 +16,13 @@ export class GamePage {
     var inclinaCelular = false;
     var pontuacao;
     var nivel;
-    this.starMath = new Phaser.Game(360, 600, Phaser.AUTO, 'phaser-example');
+    // this.starMath = new Phaser.Game(360, 600, Phaser.AUTO, 'phaser-example');
+    const width = window.innerWidth;
+    const heigth = window.innerHeight;
+
+    this.starMath = new Phaser.Game(width, heigth, Phaser.CANVAS, 'phaser-example');
+
+
     var Game = {
       PONTUACAO_VITORIA: 200,
       INCREMENTO_DE_VELOCIDADE: 0.060,
@@ -58,15 +64,15 @@ export class GamePage {
 
 
         //Texto
-        this.textoPergunta = this.add.text(this.world.centerX - 175, this.world.centerY - 300, '', {
-          font: "40px Arial",
+        this.textoPergunta = this.add.text(this.world.centerX - 175, 7, '', {
+          font: "35px Arial",
           fill: "#ffffff",
           align: "left"
         });
         this.alteraPergunta();
 
         pontuacao = 0;
-        this.textoPontuacao = this.add.text(this.world.centerX + 100, this.world.centerY - 300, pontuacao, {
+        this.textoPontuacao = this.add.text(this.world.centerX + 90, 7, pontuacao, {
           font: '35px Arial',
           fill: '#ffffff',
           align: 'center'
@@ -133,17 +139,17 @@ export class GamePage {
       criaCenarioBackground: function () {
         // refatorar tamanho do cenario aqui
         if (inclinaCelular) {
-          this.cenario = this.add.tileSprite(0, 48, 800, 600, 'cenario'); // x, y, width, heigth, key
+          this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario'); // x, y, width, heigth, key
         } else {
-          this.cenario = this.add.tileSprite(0, 48, 800, 500, 'cenario'); // x, y, width, heigth, key			
+          this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario'); // x, y, width, heigth, key			
         }
 
-        this.coracao = this.add.sprite(this.world.centerX + 25, this.world.centerY - this.world.centerY, 'coracao');
+        this.coracao = this.add.sprite(this.world.centerX, 0, 'coracao');
         this.velocidadeScrollCenario = 2;
         this.somTema.play(null, null, 0.5, true, null);
 
         this.vidas = 3;
-        this.textoVidas = this.add.text(this.world.centerX + 45, this.world.centerY - this.world.centerY + 14, this.vidas, {
+        this.textoVidas = this.add.text(this.world.centerX + 20, 14, this.vidas, {
           font: '18px Arial',
           fill: '#ffffff',
           align: 'center'
@@ -176,7 +182,6 @@ export class GamePage {
         }
 
         this.physics.enable(this.navinha, Phaser.Physics.ARCADE); // aplicar físicas (object, system)
-
       },
 
 
@@ -634,7 +639,7 @@ export class GamePage {
         }, this);
 
       }
-    };  
+    };
     this.starMath.state.add('Game', Game);
     this.starMath.state.start('Game');
   }
