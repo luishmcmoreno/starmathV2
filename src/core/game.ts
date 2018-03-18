@@ -25,15 +25,14 @@ export const CoreGame = {
     },
 
     create: function () {
-      //window.plugins.insomnia.keepAwake();
       this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
 
-      this.somTema = this.add.audio('somTema');
-      this.somRespostaCerta = this.add.audio('somRespostaCerta');
-      this.somRespostaErrada = this.add.audio('somRespostaErrada');
-      this.somGameOver = this.add.audio('somGameOver');
-      this.somExplosao = this.add.audio('somExplosao');
-      this.somVitoria = this.add.audio('somVitoria');
+      this.backgroundSound = this.add.audio('backgroundSound');
+      this.correctAnswerSound = this.add.audio('correctAnswerSound');
+      this.incorrectAnswerSound = this.add.audio('incorrectAnswerSound');
+      this.gameOverSound = this.add.audio('gameOverSound');
+      this.explosionSound = this.add.audio('explosionSound');
+      this.victorySound = this.add.audio('victorySound');
 
       this.maxRangeOperacao = 3;
       this.velocidadeMovimentacaoMeteoros = 0.5;
@@ -105,35 +104,34 @@ export const CoreGame = {
       this.load.image('navinha', `${resourcePath}/img/navinha.png`);
       this.load.image('umTiro', `${resourcePath}/img/tiro.png`);
       this.load.image('meteoro', `${resourcePath}/img/meteoro.png`);
-      this.load.image('coracao', `${resourcePath}/img/coracao.png`);
+      this.load.image('hearth', `${resourcePath}/img/hearth.png`);
       this.load.image('explosao', `${resourcePath}/img/explosao.png`);
 
-      this.load.image('botaoEsquerda', `${resourcePath}/img/esquerda.png`);
-      this.load.image('botaoDireita', `${resourcePath}/img/direita.png`);
-      this.load.image('botaoAtira', `${resourcePath}/img/atira.png`);
+      this.load.image('btnLeft', `${resourcePath}/img/left.png`);
+      this.load.image('btnRight', `${resourcePath}/img/right.png`);
+      this.load.image('btnShoot', `${resourcePath}/img/shoot.png`);
 
-      this.load.audio('somTiro', `${resourcePath}/audio/somTiro.ogg`);
-      this.load.audio('somRespostaCerta', `${resourcePath}/audio/somRespostaCerta.ogg`);
-      this.load.audio('somRespostaErrada', `${resourcePath}/audio/somRespostaErrada.ogg`);
-      this.load.audio('somGameOver', `${resourcePath}/audio/somGameOver.ogg`);
-      this.load.audio('somTema', `${resourcePath}/audio/somTema.ogg`);
-      this.load.audio('somVitoria', `${resourcePath}/audio/somVitoria.ogg`);
-      this.load.audio('somExplosao', `${resourcePath}/audio/somExplosao.ogg`);
+      this.load.audio('shootSound', `${resourcePath}/audio/somTiro.ogg`);
+      this.load.audio('correctAnswerSound', `${resourcePath}/audio/correctAnswerSound.ogg`);
+      this.load.audio('incorrectAnswerSound', `${resourcePath}/audio/incorrectAnswerSound.ogg`);
+      this.load.audio('gameOverSound', `${resourcePath}/audio/gameOverSound.ogg`);
+      this.load.audio('backgroundSound', `${resourcePath}/audio/backgroundSound.ogg`);
+      this.load.audio('victorySound', `${resourcePath}/audio/victorySound.ogg`);
+      this.load.audio('explosionSound', `${resourcePath}/audio/explosionSound.ogg`);
     },
 
 
 
     criaCenarioBackground: function () {
-      // refatorar tamanho do cenario aqui
       if (inclinaCelular) {
-        this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario'); // x, y, width, heigth, key
+        this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario');
       } else {
-        this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario'); // x, y, width, heigth, key			
+        this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario');			
       }
 
-      this.coracao = this.add.sprite(this.world.centerX, 0, 'coracao');
+      this.hearth = this.add.sprite(this.world.centerX, 0, 'hearth');
       this.velocidadeScrollCenario = 2;
-      this.somTema.play(null, null, 0.5, true, null);
+      this.backgroundSound.play(null, null, 0.5, true, null);
 
       this.vidas = 3;
       this.textoVidas = this.add.text(this.world.centerX + 20, 14, this.vidas, {
@@ -150,20 +148,20 @@ export const CoreGame = {
       } else {
         this.navinha = this.add.sprite(this.world.centerX, this.world.centerY + 120, 'navinha');
 
-        this.botaoDireita = this.add.button(this.world.centerX * 2 - 64, this.world.centerY * 2 - 50, 'botaoDireita');
-        this.botaoDireita.onInputDown.add(function () {
+        this.btnRight = this.add.button(this.world.centerX * 2 - 64, this.world.centerY * 2 - 50, 'btnRight');
+        this.btnRight.onInputDown.add(function () {
           this.isMovingRight = true;
         }, this);
-        this.botaoDireita.onInputUp.add(function () {
+        this.btnRight.onInputUp.add(function () {
           this.isMovingRight = false;
         }, this);
 
 
-        this.botaoEsquerda = this.add.button(0, this.world.centerY * 2 - 50, 'botaoEsquerda');
-        this.botaoEsquerda.onInputDown.add(function () {
+        this.btnLeft = this.add.button(0, this.world.centerY * 2 - 50, 'btnLeft');
+        this.btnLeft.onInputDown.add(function () {
           this.isMovingLeft = true;
         }, this);
-        this.botaoEsquerda.onInputUp.add(function () {
+        this.btnLeft.onInputUp.add(function () {
           this.isMovingLeft = false;
         }, this);
       }
@@ -194,7 +192,7 @@ export const CoreGame = {
       if (inclinaCelular) {
         this.touchAtirar = this.input.pointer1;
       } else {
-        this.botaoAtirar = this.add.button(this.world.centerX - 15, this.world.centerY * 2 - 50, 'botaoAtira', function () {
+        this.btnShootr = this.add.button(this.world.centerX - 15, this.world.centerY * 2 - 50, 'btnShoot', function () {
           this.atira();
         }, this);
 
@@ -264,15 +262,15 @@ export const CoreGame = {
       pontuacao += 10;
       this.textoPontuacao.text = pontuacao;
 
-      this.somRespostaCerta.play();
+      this.correctAnswerSound.play();
       this.aumentaRangeOperacoes();
       this.alteraPergunta();
       this.incrementaVelocidade();
       this.criaMeteoros();
 
       if (pontuacao >= this.VICTORY_POINTS) {
-        this.somTema.stop();
-        this.somVitoria.play();
+        this.backgroundSound.stop();
+        this.victorySound.play();
         this.starMath.state.start('Vitoria');
       }
 
@@ -329,7 +327,7 @@ export const CoreGame = {
       this.textErrado1.kill();
       this.textErrado2.kill();
 
-      this.somRespostaErrada.play();
+      this.incorrectAnswerSound.play();
 
       this.alteraPergunta();
       this.criaMeteoros();
@@ -461,7 +459,7 @@ export const CoreGame = {
           this.textCorreto.kill();
           this.textErrado1.kill();
           this.textErrado2.kill();
-          this.somRespostaErrada.play();
+          this.incorrectAnswerSound.play();
           this.criaMeteoros();
         } else if (this.meteoros.y > 600 && this.vidas <= 0) {
           this.gameOver();
@@ -482,7 +480,7 @@ export const CoreGame = {
           this.textCorreto.kill();
           this.textErrado1.kill();
           this.textErrado2.kill();
-          this.somRespostaErrada.play();
+          this.incorrectAnswerSound.play();
           this.criaMeteoros();
         } else if (this.meteoros.y > 480 && this.vidas <= 0) {
           this.gameOver();
@@ -494,8 +492,8 @@ export const CoreGame = {
 
     gameOver: function () {
 
-      this.somTema.stop();
-      this.somGameOver.play(null, null, 0.2, null, null);
+      this.backgroundSound.stop();
+      this.gameOverSound.play(null, null, 0.2, null, null);
 
       if (inclinaCelular) {
         window.removeEventListener('deviceorientation', this.chamaHandlerOrientation, true);
@@ -522,7 +520,7 @@ export const CoreGame = {
 
     criaExplosao: function (meteoro) {
 
-      this.somExplosao.play();
+      this.explosionSound.play();
       this.explosaoImg = this.add.sprite(this.navinha.x, this.navinha.y, 'explosao');
 
       this.time.events.add(400, function () {
