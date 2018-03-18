@@ -1,0 +1,1 @@
+export const resourcePath: string = 'assets/game-resources';
