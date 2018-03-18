@@ -71,10 +71,10 @@ export const CoreGame = {
       this.updateTasks();
       this.moveMeteors();
 
-      if (this.isMovingRight && this.navinha.body.x < 296) {
-        this.navinha.body.velocity.x = this.distanceToMoveOnClick;
-      } else if (this.isMovingLeft && this.navinha.body.x > 0) {
-        this.navinha.body.velocity.x = this.distanceToMoveOnClick * -1;
+      if (this.isMovingRight && this.aircraft.body.x < 296) {
+        this.aircraft.body.velocity.x = this.distanceToMoveOnClick;
+      } else if (this.isMovingLeft && this.aircraft.body.x > 0) {
+        this.aircraft.body.velocity.x = this.distanceToMoveOnClick * -1;
       }
 
       // Identify colision for each one meteor
@@ -82,9 +82,9 @@ export const CoreGame = {
       this.physics.arcade.overlap(this.shoot, this.incorrectMeteor1, this.quandoAconteceColisaoErrada, null, this);
       this.physics.arcade.overlap(this.shoot, this.incorrectMeteor2, this.quandoAconteceColisaoErrada, null, this);
 
-      this.physics.arcade.overlap(this.navinha, this.correctMeteor, this.colisaoNaveMeteoroCerto, null, this);
-      this.physics.arcade.overlap(this.navinha, this.incorrectMeteor1, this.colisaoNaveMeteoroErrado1, null, this);
-      this.physics.arcade.overlap(this.navinha, this.incorrectMeteor2, this.colisaoNaveMeteoroErrado2, null, this);
+      this.physics.arcade.overlap(this.aircraft, this.correctMeteor, this.colisaoNaveMeteoroCerto, null, this);
+      this.physics.arcade.overlap(this.aircraft, this.incorrectMeteor1, this.colisaoNaveMeteoroErrado1, null, this);
+      this.physics.arcade.overlap(this.aircraft, this.incorrectMeteor2, this.colisaoNaveMeteoroErrado2, null, this);
 
       this.checkGameOver();
     },
@@ -134,9 +134,9 @@ export const CoreGame = {
     createAircraft: function () {
 
       if (isOrientationActivated) {
-        this.navinha = this.add.sprite(this.world.centerX, this.world.centerY + 175, 'navinha');
+        this.aircraft = this.add.sprite(this.world.centerX, this.world.centerY + 175, 'navinha');
       } else {
-        this.navinha = this.add.sprite(this.world.centerX, this.world.centerY + 120, 'navinha');
+        this.aircraft = this.add.sprite(this.world.centerX, this.world.centerY + 120, 'navinha');
 
         this.btnRight = this.add.button(this.world.centerX * 2 - 64, this.world.centerY * 2 - 50, 'btnRight');
         this.btnRight.onInputDown.add(function () {
@@ -156,7 +156,7 @@ export const CoreGame = {
         }, this);
       }
 
-      this.physics.enable(this.navinha, Phaser.Physics.ARCADE); // aplicar físicas (object, system)
+      this.physics.enable(this.aircraft, Phaser.Physics.ARCADE); // aplicar físicas (object, system)
     },
 
 
@@ -334,23 +334,14 @@ export const CoreGame = {
     },
 
     updateTasks: function () {
-
       this.cenario.tilePosition.y += this.velocidadeScrollCenario;
-
-
-
-      //resetando para 0
-      this.navinha.body.velocity.x = 0;
+      this.aircraft.body.velocity.x = 0;
 
       if (isOrientationActivated) {
         if (this.touchAtirar.isDown) {
           this.atira();
         }
-      } //else if (this.isShooting){
-      //this.atira();
-      //}
-
-
+      }
     },
 
     atira: function () {
@@ -362,7 +353,7 @@ export const CoreGame = {
 
         if (this.umTiro) {
 
-          this.umTiro.reset(this.navinha.x, this.navinha.y);
+          this.umTiro.reset(this.aircraft.x, this.aircraft.y);
           // Quão rápido sobe a bala
           this.umTiro.body.velocity.y = -200; //pixels por segundo - rate / velocidade
           // De quanto em quanto tempo sai uma bala
@@ -422,16 +413,16 @@ export const CoreGame = {
       /*maior que 1 e menor que -1 apenas para evitar de andar com o celular parado,
            pois mesmo praticamente parado é detectado inclinações.	 
            */
-      if (e.gamma >= 1.5 && this.navinha.body.x < 296) {
-        this.navinha.body.velocity.x = this.distanceToMoveOnOrientation;
+      if (e.gamma >= 1.5 && this.aircraft.body.x < 296) {
+        this.aircraft.body.velocity.x = this.distanceToMoveOnOrientation;
         return; // quebra o fluxo, não executa resto do código
-      } else if (e.gamma <= -1.5 && this.navinha.body.x > 0) {
-        this.navinha.body.velocity.x = this.distanceToMoveOnOrientation * -1;
+      } else if (e.gamma <= -1.5 && this.aircraft.body.x > 0) {
+        this.aircraft.body.velocity.x = this.distanceToMoveOnOrientation * -1;
         return; // quebra o fluxo, não executa resto do código
       }
 
       // só volta pra zero quando não temm inclinação (tilt)
-      this.navinha.body.velocity.x = 0;
+      this.aircraft.body.velocity.x = 0;
     },
 
     checkGameOver: function () {
@@ -511,7 +502,7 @@ export const CoreGame = {
     criaExplosao: function (meteoro) {
 
       this.explosionSound.play();
-      this.explosaoImg = this.add.sprite(this.navinha.x, this.navinha.y, 'explosao');
+      this.explosaoImg = this.add.sprite(this.aircraft.x, this.aircraft.y, 'explosao');
 
       this.time.events.add(400, function () {
         this.explosaoImg.kill();
