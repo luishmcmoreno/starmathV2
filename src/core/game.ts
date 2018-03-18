@@ -90,7 +90,7 @@ export const CoreGame = {
     },
 
     loadResources: function () {
-      this.load.image('cenario', `${resourcePath}/img/cenario.png`);
+      this.load.image('background', `${resourcePath}/img/background.png`);
       this.load.image('navinha', `${resourcePath}/img/navinha.png`);
       this.load.image('umTiro', `${resourcePath}/img/tiro.png`);
       this.load.image('meteoro', `${resourcePath}/img/meteoro.png`);
@@ -114,13 +114,13 @@ export const CoreGame = {
 
     createBackground: function () {
       if (isOrientationActivated) {
-        this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario');
+        this.background = this.add.tileSprite(0, 48, width, heigth, 'background');
       } else {
-        this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario');			
+        this.background = this.add.tileSprite(0, 48, width, heigth, 'background');			
       }
 
       this.hearth = this.add.sprite(this.world.centerX, 0, 'hearth');
-      this.velocidadeScrollCenario = 2;
+      this.backgroundScrollSpeed = 2;
       this.backgroundSound.play(null, null, 0.5, true, null);
 
       this.vidas = 3;
@@ -334,7 +334,7 @@ export const CoreGame = {
     },
 
     updateTasks: function () {
-      this.cenario.tilePosition.y += this.velocidadeScrollCenario;
+      this.background.tilePosition.y += this.backgroundScrollSpeed;
       this.aircraft.body.velocity.x = 0;
 
       if (isOrientationActivated) {
