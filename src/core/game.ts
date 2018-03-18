@@ -11,15 +11,17 @@ const heigth = window.innerHeight;
 
 export const CoreGame = {
     VICTORY_POINTS: 200,
-    INCREMENTO_DE_VELOCIDADE: 0.060,
-    andandoEsquerda: false,
-    andandoDireita: false,
-    atirando: false,
-    distanciaNaveBotao: 120,
-    distanciaNaveDeviceOrientation: 125,
+    SPEED_INCREMENT: 0.060,
+
+    isMovingLeft: false,
+    isMovingRight: false,
+
+    isShooting: false,
+    distanceToMoveOnClick: 120,
+    distanceToMoveOnOrientation: 125,
 
     preload: function () {
-      this.carregaRecursos();
+      this.loadResources();
     },
 
     create: function () {
@@ -78,10 +80,10 @@ export const CoreGame = {
 
       this.movimentaMeteoros();
 
-      if (this.andandoDireita && this.navinha.body.x < 296) {
-        this.navinha.body.velocity.x = this.distanciaNaveBotao;
-      } else if (this.andandoEsquerda && this.navinha.body.x > 0) {
-        this.navinha.body.velocity.x = this.distanciaNaveBotao * -1;
+      if (this.isMovingRight && this.navinha.body.x < 296) {
+        this.navinha.body.velocity.x = this.distanceToMoveOnClick;
+      } else if (this.isMovingLeft && this.navinha.body.x > 0) {
+        this.navinha.body.velocity.x = this.distanceToMoveOnClick * -1;
       }
 
       // Identificando colisão para cada um dos meteoros
@@ -98,7 +100,7 @@ export const CoreGame = {
 
     },
 
-    carregaRecursos: function () {
+    loadResources: function () {
       this.load.image('cenario', `${resourcePath}/img/cenario.png`);
       this.load.image('navinha', `${resourcePath}/img/navinha.png`);
       this.load.image('umTiro', `${resourcePath}/img/tiro.png`);
@@ -150,19 +152,19 @@ export const CoreGame = {
 
         this.botaoDireita = this.add.button(this.world.centerX * 2 - 64, this.world.centerY * 2 - 50, 'botaoDireita');
         this.botaoDireita.onInputDown.add(function () {
-          this.andandoDireita = true;
+          this.isMovingRight = true;
         }, this);
         this.botaoDireita.onInputUp.add(function () {
-          this.andandoDireita = false;
+          this.isMovingRight = false;
         }, this);
 
 
         this.botaoEsquerda = this.add.button(0, this.world.centerY * 2 - 50, 'botaoEsquerda');
         this.botaoEsquerda.onInputDown.add(function () {
-          this.andandoEsquerda = true;
+          this.isMovingLeft = true;
         }, this);
         this.botaoEsquerda.onInputUp.add(function () {
-          this.andandoEsquerda = false;
+          this.isMovingLeft = false;
         }, this);
       }
 
@@ -356,7 +358,7 @@ export const CoreGame = {
         if (this.touchAtirar.isDown) {
           this.atira();
         }
-      } //else if (this.atirando){
+      } //else if (this.isShooting){
       //this.atira();
       //}
 
@@ -433,10 +435,10 @@ export const CoreGame = {
            pois mesmo praticamente parado é detectado inclinações.	 
            */
       if (e.gamma >= 1.5 && this.navinha.body.x < 296) {
-        this.navinha.body.velocity.x = this.distanciaNaveDeviceOrientation;
+        this.navinha.body.velocity.x = this.distanceToMoveOnOrientation;
         return; // quebra o fluxo, não executa resto do código
       } else if (e.gamma <= -1.5 && this.navinha.body.x > 0) {
-        this.navinha.body.velocity.x = this.distanciaNaveDeviceOrientation * -1;
+        this.navinha.body.velocity.x = this.distanceToMoveOnOrientation * -1;
         return; // quebra o fluxo, não executa resto do código
       }
 
@@ -511,7 +513,7 @@ export const CoreGame = {
     },
 
     incrementaVelocidade: function () {
-      this.velocidadeMovimentacaoMeteoros += this.INCREMENTO_DE_VELOCIDADE;
+      this.velocidadeMovimentacaoMeteoros += this.SPEED_INCREMENT;
     },
 
     aumentaRangeOperacoes: function () {
