@@ -43,7 +43,7 @@ export const CoreGame = {
       this.createGoalText();
 
       if (isOrientationActivated) {
-        window.addEventListener("deviceorientation", this.chamaHandlerOrientation, true);
+        window.addEventListener("deviceorientation", this.callHandleOrientation, true);
       }
 
       this.questionText = this.add.text(this.world.centerX - 175, 7, '', {
@@ -404,7 +404,7 @@ export const CoreGame = {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
 
-    chamaHandlerOrientation: function (e) {
+    callHandleOrientation: function (e) {
       Reflect.apply(CoreGame.handleOrientation, CoreGame, [e])
     },
 
@@ -477,7 +477,7 @@ export const CoreGame = {
       this.gameOverSound.play(null, null, 0.2, null, null);
 
       if (isOrientationActivated) {
-        window.removeEventListener('deviceorientation', this.chamaHandlerOrientation, true);
+        window.removeEventListener('deviceorientation', this.callHandleOrientation, true);
       }
 
       this.meteorSpeed = 0.5;
