@@ -2,15 +2,15 @@ import { resourcePath } from './constants';
 
 declare var Phaser;
 
-var inclinaCelular = false;
-var pontuacao;
-var nivel;
+var isOrientationActivated = false;
+var points;
+var difficulty;
 
 const width = window.innerWidth;
 const heigth = window.innerHeight;
 
 export const CoreGame = {
-    VICTORY_POINTS: 200,
+    VICTORY_POINTS: 20,
     SPEED_INCREMENT: 0.060,
 
     isMovingLeft: false,
@@ -34,50 +34,42 @@ export const CoreGame = {
       this.explosionSound = this.add.audio('explosionSound');
       this.victorySound = this.add.audio('victorySound');
 
-      this.maxRangeOperacao = 3;
-      this.velocidadeMovimentacaoMeteoros = 0.5;
+      this.maxRangeOperation = 3;
+      this.meteorSpeed = 0.5;
 
-      this.criaCenarioBackground();
-      this.criaNave();
-      this.criaTiros();
-      this.criaMeta();
+      this.createBackground();
+      this.createAircraft();
+      this.createShoots();
+      this.createGoalText();
 
-      /*Device orientado, 
-        API para detectar inclinações do celular e movimentar a nave
-        */
-      if (inclinaCelular) {
+      if (isOrientationActivated) {
         window.addEventListener("deviceorientation", this.chamaHandlerOrientation, true);
       }
 
-      //Texto
-      this.textoPergunta = this.add.text(this.world.centerX - 175, 7, '', {
+      this.questionText = this.add.text(this.world.centerX - 175, 7, '', {
         font: "35px Arial",
         fill: "#ffffff",
         align: "left"
       });
-      this.alteraPergunta();
+      this.changeQuestion();
 
-      pontuacao = 0;
-      this.textoPontuacao = this.add.text(this.world.centerX + 90, 7, pontuacao, {
+      points = 0;
+      this.textPoints = this.add.text(this.world.centerX + 90, 7, points, {
         font: '35px Arial',
         fill: '#ffffff',
         align: 'center'
       });
 
-      // Meteoros com a resposta
       this.meteoros = this.add.group();
       this.meteoros.enableBody = true;
       this.meteoros.physicsBodyType = Phaser.Physics.ARCADE;
-      this.criaMeteoros();
+      this.createMeteors();
 
     },
 
     update: function () {
-      this.atualizacoes();
-      // Faz meteoros descer (O GRUPO)
-
-
-      this.movimentaMeteoros();
+      this.updateTasks();
+      this.moveMeteors();
 
       if (this.isMovingRight && this.navinha.body.x < 296) {
         this.navinha.body.velocity.x = this.distanceToMoveOnClick;
@@ -85,18 +77,16 @@ export const CoreGame = {
         this.navinha.body.velocity.x = this.distanceToMoveOnClick * -1;
       }
 
-      // Identificando colisão para cada um dos meteoros
-      // objetos que recebem colisao, funcao, 
-      this.physics.arcade.overlap(this.tiro, this.meteoroCerto, this.quandoAconteceColisaoCorreta, null, this);
-      this.physics.arcade.overlap(this.tiro, this.meteoroErrado1, this.quandoAconteceColisaoErrada, null, this);
-      this.physics.arcade.overlap(this.tiro, this.meteoroErrado2, this.quandoAconteceColisaoErrada, null, this);
+      // Identify colision for each one meteor
+      this.physics.arcade.overlap(this.shoot, this.correctMeteor, this.quandoAconteceColisaoCorreta, null, this);
+      this.physics.arcade.overlap(this.shoot, this.incorrectMeteor1, this.quandoAconteceColisaoErrada, null, this);
+      this.physics.arcade.overlap(this.shoot, this.incorrectMeteor2, this.quandoAconteceColisaoErrada, null, this);
 
-      this.physics.arcade.overlap(this.navinha, this.meteoroCerto, this.colisaoNaveMeteoroCerto, null, this);
-      this.physics.arcade.overlap(this.navinha, this.meteoroErrado1, this.colisaoNaveMeteoroErrado1, null, this);
-      this.physics.arcade.overlap(this.navinha, this.meteoroErrado2, this.colisaoNaveMeteoroErrado2, null, this);
+      this.physics.arcade.overlap(this.navinha, this.correctMeteor, this.colisaoNaveMeteoroCerto, null, this);
+      this.physics.arcade.overlap(this.navinha, this.incorrectMeteor1, this.colisaoNaveMeteoroErrado1, null, this);
+      this.physics.arcade.overlap(this.navinha, this.incorrectMeteor2, this.colisaoNaveMeteoroErrado2, null, this);
 
       this.checkGameOver();
-
     },
 
     loadResources: function () {
@@ -111,7 +101,7 @@ export const CoreGame = {
       this.load.image('btnRight', `${resourcePath}/img/right.png`);
       this.load.image('btnShoot', `${resourcePath}/img/shoot.png`);
 
-      this.load.audio('shootSound', `${resourcePath}/audio/somTiro.ogg`);
+      this.load.audio('shootSound', `${resourcePath}/audio/shootSound.ogg`);
       this.load.audio('correctAnswerSound', `${resourcePath}/audio/correctAnswerSound.ogg`);
       this.load.audio('incorrectAnswerSound', `${resourcePath}/audio/incorrectAnswerSound.ogg`);
       this.load.audio('gameOverSound', `${resourcePath}/audio/gameOverSound.ogg`);
@@ -122,8 +112,8 @@ export const CoreGame = {
 
 
 
-    criaCenarioBackground: function () {
-      if (inclinaCelular) {
+    createBackground: function () {
+      if (isOrientationActivated) {
         this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario');
       } else {
         this.cenario = this.add.tileSprite(0, 48, width, heigth, 'cenario');			
@@ -141,9 +131,9 @@ export const CoreGame = {
       });
     },
 
-    criaNave: function () {
+    createAircraft: function () {
 
-      if (inclinaCelular) {
+      if (isOrientationActivated) {
         this.navinha = this.add.sprite(this.world.centerX, this.world.centerY + 175, 'navinha');
       } else {
         this.navinha = this.add.sprite(this.world.centerX, this.world.centerY + 120, 'navinha');
@@ -170,26 +160,26 @@ export const CoreGame = {
     },
 
 
-    criaTiros: function () {
+    createShoots: function () {
 
-      this.tiroVelocidade = 0;
+      this.shootVelocidade = 0;
 
-      this.somTiro = this.add.audio('somTiro');
+      this.shootSound = this.add.audio('shootSound');
 
-      this.tiro = this.add.group();
+      this.shoot = this.add.group();
       // Faz com que os objetos do grupo tenham um 'corpo' e em seguida seta o sistema de fisica aplicado a esses corpos
-      this.tiro.enableBody = true;
-      this.tiro.physicsBodyType = Phaser.Physics.ARCADE;
+      this.shoot.enableBody = true;
+      this.shoot.physicsBodyType = Phaser.Physics.ARCADE;
       // Cria um grupo de 30 sprites usando a imagem da key fornecida
-      this.tiro.createMultiple(30, 'umTiro');
+      this.shoot.createMultiple(30, 'umTiro');
       // Posiçao do tiro no bico da nave   ---- Altura em que o tiro sai, pra sair da boca da nave e não do meio da tela
-      this.tiro.setAll('anchor.x', -0.9);
-      this.tiro.setAll('anchor.y', 0.8);
+      this.shoot.setAll('anchor.x', -0.9);
+      this.shoot.setAll('anchor.y', 0.8);
       // Faz o objeto ser killado após sair da tela chamando automaticamente a função inWorld que retorna false	
-      this.tiro.setAll('outOfBoundsKill', true);
-      this.tiro.setAll('checkWorldBounds', true);
+      this.shoot.setAll('outOfBoundsKill', true);
+      this.shoot.setAll('checkWorldBounds', true);
 
-      if (inclinaCelular) {
+      if (isOrientationActivated) {
         this.touchAtirar = this.input.pointer1;
       } else {
         this.btnShootr = this.add.button(this.world.centerX - 15, this.world.centerY * 2 - 50, 'btnShoot', function () {
@@ -201,49 +191,49 @@ export const CoreGame = {
     },
 
 
-    criaMeteoros: function () {
+    createMeteors: function () {
       // reseta posição do gurpo no eixo y
       this.meteoros.y = 0;
 
       this.getPosicaoMeteoros();
 
-      this.meteoroCerto = this.meteoros.create(this.posicoes[0], 65, 'meteoro');
-      this.meteoroCerto.anchor.setTo(0.5, 0.5);
-      this.textCorreto = this.add.text(this.meteoroCerto.x, this.meteoroCerto.y, this.respostaCorreta, {
+      this.correctMeteor = this.meteoros.create(this.posicoes[0], 65, 'meteoro');
+      this.correctMeteor.anchor.setTo(0.5, 0.5);
+      this.textCorreto = this.add.text(this.correctMeteor.x, this.correctMeteor.y, this.respostaCorreta, {
         font: "20px Arial",
         fill: "#ffffff",
         stroke: "000",
         strokeThickness: 3,
         wordWrap: true,
-        wordWrapWidth: this.meteoroCerto.width,
+        wordWrapWidth: this.correctMeteor.width,
         align: "center"
       });
       this.textCorreto.anchor.set(0.5, 0.5);
 
 
-      this.meteoroErrado1 = this.meteoros.create(this.posicoes[1], 65, 'meteoro');
-      this.meteoroErrado1.anchor.setTo(0.5, 0.5);
-      this.textErrado1 = this.add.text(this.meteoroErrado1.x, this.meteoroErrado1.y, this.respostaCorreta - this.getRandomInt(1, 7), {
+      this.incorrectMeteor1 = this.meteoros.create(this.posicoes[1], 65, 'meteoro');
+      this.incorrectMeteor1.anchor.setTo(0.5, 0.5);
+      this.textErrado1 = this.add.text(this.incorrectMeteor1.x, this.incorrectMeteor1.y, this.respostaCorreta - this.getRandomInt(1, 7), {
         font: "20px Arial",
         fill: "#ffffff",
         stroke: "000",
         strokeThickness: 3,
         wordWrap: true,
-        wordWrapWidth: this.meteoroErrado1.width,
+        wordWrapWidth: this.incorrectMeteor1.width,
         align: "center"
       });
       this.textErrado1.anchor.set(0.5, 0.5);
 
 
-      this.meteoroErrado2 = this.meteoros.create(this.posicoes[2], 65, 'meteoro');
-      this.meteoroErrado2.anchor.setTo(0.5, 0.5);
-      this.textErrado2 = this.add.text(this.meteoroErrado2.x, this.meteoroErrado2.y, this.respostaCorreta - this.getRandomInt(1, 3), {
+      this.incorrectMeteor2 = this.meteoros.create(this.posicoes[2], 65, 'meteoro');
+      this.incorrectMeteor2.anchor.setTo(0.5, 0.5);
+      this.textErrado2 = this.add.text(this.incorrectMeteor2.x, this.incorrectMeteor2.y, this.respostaCorreta - this.getRandomInt(1, 3), {
         font: "20px Arial",
         fill: "#ffffff",
         stroke: "000",
         strokeThickness: 3,
         wordWrap: true,
-        wordWrapWidth: this.meteoroErrado2.width,
+        wordWrapWidth: this.incorrectMeteor2.width,
         align: "center"
       });
       this.textErrado2.anchor.set(0.5, 0.5);
@@ -254,21 +244,21 @@ export const CoreGame = {
     quandoAconteceColisaoCorreta: function (tiroQueAcertou, meteoro) {
       tiroQueAcertou.kill();
       meteoro.kill();
-      this.meteoroErrado1.kill();
-      this.meteoroErrado2.kill();
+      this.incorrectMeteor1.kill();
+      this.incorrectMeteor2.kill();
       this.textCorreto.kill();
       this.textErrado1.kill();
       this.textErrado2.kill();
-      pontuacao += 10;
-      this.textoPontuacao.text = pontuacao;
+      points += 10;
+      this.textPoints.text = points;
 
       this.correctAnswerSound.play();
       this.aumentaRangeOperacoes();
-      this.alteraPergunta();
+      this.changeQuestion();
       this.incrementaVelocidade();
-      this.criaMeteoros();
+      this.createMeteors();
 
-      if (pontuacao >= this.VICTORY_POINTS) {
+      if (points >= this.VICTORY_POINTS) {
         this.backgroundSound.stop();
         this.victorySound.play();
         this.starMath.state.start('Vitoria');
@@ -278,15 +268,15 @@ export const CoreGame = {
     },
 
 
-    alteraPergunta: function () {
-      var op = this.getRandomInt(1, nivel);
-      var a = this.getRandomInt(1, this.maxRangeOperacao);
-      var b = this.getRandomInt(1, this.maxRangeOperacao);
+    changeQuestion: function () {
+      var op = this.getRandomInt(1, difficulty);
+      var a = this.getRandomInt(1, this.maxRangeOperation);
+      var b = this.getRandomInt(1, this.maxRangeOperation);
 
 
       if (op == 1) { //soma
         this.respostaCorreta = a + b;
-        this.textoPergunta.text = a + '+' + b + " = ?"
+        this.questionText.text = a + '+' + b + " = ?"
       } else if (op == 2) { //subtração
 
         //Evita respostas das operações com negativos
@@ -297,12 +287,12 @@ export const CoreGame = {
         }
 
         this.respostaCorreta = a - b;
-        this.textoPergunta.text = a + '-' + b + " = ?"
+        this.questionText.text = a + '-' + b + " = ?"
       } else if (op == 3) { //multiplicação
         a = this.getRandomInt(1, 10);
         b = this.getRandomInt(1, 10);
         this.respostaCorreta = a * b;
-        this.textoPergunta.text = a + 'x' + b + " = ?"
+        this.questionText.text = a + 'x' + b + " = ?"
       } else { //divisão -> op == 4
         //Evita respostas das operações com valores irracionais
         while (a % b != 0) {
@@ -310,7 +300,7 @@ export const CoreGame = {
           b = this.getRandomInt(1, 10);
         }
         this.respostaCorreta = a / b;
-        this.textoPergunta.text = a + '÷' + b + " = ?"
+        this.questionText.text = a + '÷' + b + " = ?"
       }
     },
 
@@ -319,9 +309,9 @@ export const CoreGame = {
       tiroQueAcertou.kill();
       meteoro.kill();
 
-      this.meteoroCerto.kill();
-      this.meteoroErrado1.kill();
-      this.meteoroErrado2.kill();
+      this.correctMeteor.kill();
+      this.incorrectMeteor1.kill();
+      this.incorrectMeteor2.kill();
 
       this.textCorreto.kill();
       this.textErrado1.kill();
@@ -329,21 +319,21 @@ export const CoreGame = {
 
       this.incorrectAnswerSound.play();
 
-      this.alteraPergunta();
-      this.criaMeteoros();
+      this.changeQuestion();
+      this.createMeteors();
       // verifica vidas e chama game-over
       this.vidas--;
       this.textoVidas.text = this.vidas;
 
-      if (pontuacao >= 10) {
-        pontuacao -= 10;
-        this.textoPontuacao.text = pontuacao;
+      if (points >= 10) {
+        points -= 10;
+        this.textPoints.text = points;
       }
 
       this.checkGameOver();
     },
 
-    atualizacoes: function () {
+    updateTasks: function () {
 
       this.cenario.tilePosition.y += this.velocidadeScrollCenario;
 
@@ -352,7 +342,7 @@ export const CoreGame = {
       //resetando para 0
       this.navinha.body.velocity.x = 0;
 
-      if (inclinaCelular) {
+      if (isOrientationActivated) {
         if (this.touchAtirar.isDown) {
           this.atira();
         }
@@ -365,10 +355,10 @@ export const CoreGame = {
 
     atira: function () {
 
-      this.umTiro = this.tiro.getFirstExists(false);
+      this.umTiro = this.shoot.getFirstExists(false);
 
-      this.somTiro.play();
-      if (this.time.now > this.tiroVelocidade) {
+      this.shootSound.play();
+      if (this.time.now > this.shootVelocidade) {
 
         if (this.umTiro) {
 
@@ -376,7 +366,7 @@ export const CoreGame = {
           // Quão rápido sobe a bala
           this.umTiro.body.velocity.y = -200; //pixels por segundo - rate / velocidade
           // De quanto em quanto tempo sai uma bala
-          this.tiroVelocidade = this.time.now + 300;
+          this.shootVelocidade = this.time.now + 300;
         }
       }
     },
@@ -445,22 +435,22 @@ export const CoreGame = {
     },
 
     checkGameOver: function () {
-      if (inclinaCelular) {
+      if (isOrientationActivated) {
         if (this.meteoros.y > 600 && this.vidas > 0) {
           this.vidas--;
           this.textoVidas.text = this.vidas;
-          if (pontuacao >= 10) {
-            pontuacao -= 10;
-            this.textoPontuacao.text = pontuacao;
+          if (points >= 10) {
+            points -= 10;
+            this.textPoints.text = points;
           }
-          this.meteoroErrado1.kill();
-          this.meteoroErrado2.kill();
-          this.meteoroCerto.kill();
+          this.incorrectMeteor1.kill();
+          this.incorrectMeteor2.kill();
+          this.correctMeteor.kill();
           this.textCorreto.kill();
           this.textErrado1.kill();
           this.textErrado2.kill();
           this.incorrectAnswerSound.play();
-          this.criaMeteoros();
+          this.createMeteors();
         } else if (this.meteoros.y > 600 && this.vidas <= 0) {
           this.gameOver();
         } else if (this.vidas <= 0) {
@@ -470,18 +460,18 @@ export const CoreGame = {
         if (this.meteoros.y > 480 && this.vidas > 0) {
           this.vidas--;
           this.textoVidas.text = this.vidas;
-          if (pontuacao >= 10) {
-            pontuacao -= 10;
-            this.textoPontuacao.text = pontuacao;
+          if (points >= 10) {
+            points -= 10;
+            this.textPoints.text = points;
           }
-          this.meteoroErrado1.kill();
-          this.meteoroErrado2.kill();
-          this.meteoroCerto.kill();
+          this.incorrectMeteor1.kill();
+          this.incorrectMeteor2.kill();
+          this.correctMeteor.kill();
           this.textCorreto.kill();
           this.textErrado1.kill();
           this.textErrado2.kill();
           this.incorrectAnswerSound.play();
-          this.criaMeteoros();
+          this.createMeteors();
         } else if (this.meteoros.y > 480 && this.vidas <= 0) {
           this.gameOver();
         } else if (this.vidas <= 0) {
@@ -495,27 +485,27 @@ export const CoreGame = {
       this.backgroundSound.stop();
       this.gameOverSound.play(null, null, 0.2, null, null);
 
-      if (inclinaCelular) {
+      if (isOrientationActivated) {
         window.removeEventListener('deviceorientation', this.chamaHandlerOrientation, true);
       }
 
-      this.velocidadeMovimentacaoMeteoros = 0.5;
+      this.meteorSpeed = 0.5;
       this.starMath.state.start('Game-over');
     },
 
-    movimentaMeteoros: function () {
-      this.meteoros.y += this.velocidadeMovimentacaoMeteoros;
-      this.textCorreto.y += this.velocidadeMovimentacaoMeteoros;
-      this.textErrado1.y += this.velocidadeMovimentacaoMeteoros;
-      this.textErrado2.y += this.velocidadeMovimentacaoMeteoros;
+    moveMeteors: function () {
+      this.meteoros.y += this.meteorSpeed;
+      this.textCorreto.y += this.meteorSpeed;
+      this.textErrado1.y += this.meteorSpeed;
+      this.textErrado2.y += this.meteorSpeed;
     },
 
     incrementaVelocidade: function () {
-      this.velocidadeMovimentacaoMeteoros += this.SPEED_INCREMENT;
+      this.meteorSpeed += this.SPEED_INCREMENT;
     },
 
     aumentaRangeOperacoes: function () {
-      this.maxRangeOperacao += 1;
+      this.maxRangeOperation += 1;
     },
 
     criaExplosao: function (meteoro) {
@@ -533,22 +523,22 @@ export const CoreGame = {
       this.criaExplosao();
 
       meteoro.kill();
-      this.meteoroErrado1.kill();
-      this.meteoroErrado2.kill();
+      this.incorrectMeteor1.kill();
+      this.incorrectMeteor2.kill();
 
       this.textCorreto.kill();
       this.textErrado1.kill();
       this.textErrado2.kill();
 
-      this.alteraPergunta();
-      this.criaMeteoros();
+      this.changeQuestion();
+      this.createMeteors();
       // verifica vidas e chama game-over
       this.vidas--;
       this.textoVidas.text = this.vidas;
 
-      if (pontuacao >= 10) {
-        pontuacao -= 10;
-        this.textoPontuacao.text = pontuacao;
+      if (points >= 10) {
+        points -= 10;
+        this.textPoints.text = points;
       }
 
       this.checkGameOver();
@@ -559,22 +549,22 @@ export const CoreGame = {
       this.criaExplosao();
 
       meteoro.kill();
-      this.meteoroCerto.kill()
-      this.meteoroErrado2.kill();
+      this.correctMeteor.kill()
+      this.incorrectMeteor2.kill();
 
       this.textCorreto.kill();
       this.textErrado1.kill();
       this.textErrado2.kill();
 
-      this.alteraPergunta();
-      this.criaMeteoros();
+      this.changeQuestion();
+      this.createMeteors();
       // verifica vidas e chama game-over
       this.vidas--;
       this.textoVidas.text = this.vidas;
 
-      if (pontuacao >= 10) {
-        pontuacao -= 10;
-        this.textoPontuacao.text = pontuacao;
+      if (points >= 10) {
+        points -= 10;
+        this.textPoints.text = points;
       }
 
       this.checkGameOver();
@@ -583,28 +573,28 @@ export const CoreGame = {
       this.criaExplosao();
 
       meteoro.kill();
-      this.meteoroCerto.kill();
-      this.meteoroErrado1.kill();
+      this.correctMeteor.kill();
+      this.incorrectMeteor1.kill();
 
       this.textCorreto.kill();
       this.textErrado1.kill();
       this.textErrado2.kill();
 
-      this.alteraPergunta();
-      this.criaMeteoros();
+      this.changeQuestion();
+      this.createMeteors();
 
       // verifica vidas e chama game-over
       this.vidas--;
       this.textoVidas.text = this.vidas;
 
-      if (pontuacao >= 10) {
-        pontuacao -= 10;
-        this.textoPontuacao.text = pontuacao;
+      if (points >= 10) {
+        points -= 10;
+        this.textPoints.text = points;
       }
 
       this.checkGameOver();
     },
-    criaMeta: function () {
+    createGoalText: function () {
 
       this.textoMeta = this.add.text(this.world.centerX - 125, this.world.centerY, 'Objetivo da missão: \nFaça ' + this.VICTORY_POINTS + ' pontos!', {
         font: '30px Arial',
