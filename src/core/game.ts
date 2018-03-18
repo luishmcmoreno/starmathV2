@@ -60,9 +60,9 @@ export const CoreGame = {
         align: 'center'
       });
 
-      this.meteoros = this.add.group();
-      this.meteoros.enableBody = true;
-      this.meteoros.physicsBodyType = Phaser.Physics.ARCADE;
+      this.meteors = this.add.group();
+      this.meteors.enableBody = true;
+      this.meteors.physicsBodyType = Phaser.Physics.ARCADE;
       this.createMeteors();
 
     },
@@ -193,11 +193,11 @@ export const CoreGame = {
 
     createMeteors: function () {
       // reseta posição do gurpo no eixo y
-      this.meteoros.y = 0;
+      this.meteors.y = 0;
 
       this.getPosicaoMeteoros();
 
-      this.correctMeteor = this.meteoros.create(this.posicoes[0], 65, 'meteoro');
+      this.correctMeteor = this.meteors.create(this.posicoes[0], 65, 'meteoro');
       this.correctMeteor.anchor.setTo(0.5, 0.5);
       this.textCorreto = this.add.text(this.correctMeteor.x, this.correctMeteor.y, this.respostaCorreta, {
         font: "20px Arial",
@@ -211,7 +211,7 @@ export const CoreGame = {
       this.textCorreto.anchor.set(0.5, 0.5);
 
 
-      this.incorrectMeteor1 = this.meteoros.create(this.posicoes[1], 65, 'meteoro');
+      this.incorrectMeteor1 = this.meteors.create(this.posicoes[1], 65, 'meteoro');
       this.incorrectMeteor1.anchor.setTo(0.5, 0.5);
       this.textErrado1 = this.add.text(this.incorrectMeteor1.x, this.incorrectMeteor1.y, this.respostaCorreta - this.getRandomInt(1, 7), {
         font: "20px Arial",
@@ -225,7 +225,7 @@ export const CoreGame = {
       this.textErrado1.anchor.set(0.5, 0.5);
 
 
-      this.incorrectMeteor2 = this.meteoros.create(this.posicoes[2], 65, 'meteoro');
+      this.incorrectMeteor2 = this.meteors.create(this.posicoes[2], 65, 'meteoro');
       this.incorrectMeteor2.anchor.setTo(0.5, 0.5);
       this.textErrado2 = this.add.text(this.incorrectMeteor2.x, this.incorrectMeteor2.y, this.respostaCorreta - this.getRandomInt(1, 3), {
         font: "20px Arial",
@@ -436,7 +436,7 @@ export const CoreGame = {
 
     checkGameOver: function () {
       if (isOrientationActivated) {
-        if (this.meteoros.y > 600 && this.vidas > 0) {
+        if (this.meteors.y > 600 && this.vidas > 0) {
           this.vidas--;
           this.textoVidas.text = this.vidas;
           if (points >= 10) {
@@ -451,13 +451,13 @@ export const CoreGame = {
           this.textErrado2.kill();
           this.incorrectAnswerSound.play();
           this.createMeteors();
-        } else if (this.meteoros.y > 600 && this.vidas <= 0) {
+        } else if (this.meteors.y > 600 && this.vidas <= 0) {
           this.gameOver();
         } else if (this.vidas <= 0) {
           this.gameOver();
         }
       } else {
-        if (this.meteoros.y > 480 && this.vidas > 0) {
+        if (this.meteors.y > 480 && this.vidas > 0) {
           this.vidas--;
           this.textoVidas.text = this.vidas;
           if (points >= 10) {
@@ -472,7 +472,7 @@ export const CoreGame = {
           this.textErrado2.kill();
           this.incorrectAnswerSound.play();
           this.createMeteors();
-        } else if (this.meteoros.y > 480 && this.vidas <= 0) {
+        } else if (this.meteors.y > 480 && this.vidas <= 0) {
           this.gameOver();
         } else if (this.vidas <= 0) {
           this.gameOver();
@@ -494,7 +494,7 @@ export const CoreGame = {
     },
 
     moveMeteors: function () {
-      this.meteoros.y += this.meteorSpeed;
+      this.meteors.y += this.meteorSpeed;
       this.textCorreto.y += this.meteorSpeed;
       this.textErrado1.y += this.meteorSpeed;
       this.textErrado2.y += this.meteorSpeed;
