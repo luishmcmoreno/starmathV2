@@ -199,7 +199,7 @@ export const CoreGame = {
 
       this.correctMeteor = this.meteors.create(this.posicoes[0], 65, 'meteoro');
       this.correctMeteor.anchor.setTo(0.5, 0.5);
-      this.textCorreto = this.add.text(this.correctMeteor.x, this.correctMeteor.y, this.respostaCorreta, {
+      this.correctText = this.add.text(this.correctMeteor.x, this.correctMeteor.y, this.respostaCorreta, {
         font: "20px Arial",
         fill: "#ffffff",
         stroke: "000",
@@ -208,12 +208,12 @@ export const CoreGame = {
         wordWrapWidth: this.correctMeteor.width,
         align: "center"
       });
-      this.textCorreto.anchor.set(0.5, 0.5);
+      this.correctText.anchor.set(0.5, 0.5);
 
 
       this.incorrectMeteor1 = this.meteors.create(this.posicoes[1], 65, 'meteoro');
       this.incorrectMeteor1.anchor.setTo(0.5, 0.5);
-      this.textErrado1 = this.add.text(this.incorrectMeteor1.x, this.incorrectMeteor1.y, this.respostaCorreta - this.getRandomInt(1, 7), {
+      this.incorrectText1 = this.add.text(this.incorrectMeteor1.x, this.incorrectMeteor1.y, this.respostaCorreta - this.getRandomInt(1, 7), {
         font: "20px Arial",
         fill: "#ffffff",
         stroke: "000",
@@ -222,12 +222,12 @@ export const CoreGame = {
         wordWrapWidth: this.incorrectMeteor1.width,
         align: "center"
       });
-      this.textErrado1.anchor.set(0.5, 0.5);
+      this.incorrectText1.anchor.set(0.5, 0.5);
 
 
       this.incorrectMeteor2 = this.meteors.create(this.posicoes[2], 65, 'meteoro');
       this.incorrectMeteor2.anchor.setTo(0.5, 0.5);
-      this.textErrado2 = this.add.text(this.incorrectMeteor2.x, this.incorrectMeteor2.y, this.respostaCorreta - this.getRandomInt(1, 3), {
+      this.incorrectText2 = this.add.text(this.incorrectMeteor2.x, this.incorrectMeteor2.y, this.respostaCorreta - this.getRandomInt(1, 3), {
         font: "20px Arial",
         fill: "#ffffff",
         stroke: "000",
@@ -236,7 +236,7 @@ export const CoreGame = {
         wordWrapWidth: this.incorrectMeteor2.width,
         align: "center"
       });
-      this.textErrado2.anchor.set(0.5, 0.5);
+      this.incorrectText2.anchor.set(0.5, 0.5);
 
 
     },
@@ -246,9 +246,9 @@ export const CoreGame = {
       meteoro.kill();
       this.incorrectMeteor1.kill();
       this.incorrectMeteor2.kill();
-      this.textCorreto.kill();
-      this.textErrado1.kill();
-      this.textErrado2.kill();
+      this.correctText.kill();
+      this.incorrectText1.kill();
+      this.incorrectText2.kill();
       points += 10;
       this.textPoints.text = points;
 
@@ -313,9 +313,9 @@ export const CoreGame = {
       this.incorrectMeteor1.kill();
       this.incorrectMeteor2.kill();
 
-      this.textCorreto.kill();
-      this.textErrado1.kill();
-      this.textErrado2.kill();
+      this.correctText.kill();
+      this.incorrectText1.kill();
+      this.incorrectText2.kill();
 
       this.incorrectAnswerSound.play();
 
@@ -437,9 +437,9 @@ export const CoreGame = {
           this.incorrectMeteor1.kill();
           this.incorrectMeteor2.kill();
           this.correctMeteor.kill();
-          this.textCorreto.kill();
-          this.textErrado1.kill();
-          this.textErrado2.kill();
+          this.correctText.kill();
+          this.incorrectText1.kill();
+          this.incorrectText2.kill();
           this.incorrectAnswerSound.play();
           this.createMeteors();
         } else if (this.meteors.y > 600 && this.vidas <= 0) {
@@ -458,9 +458,9 @@ export const CoreGame = {
           this.incorrectMeteor1.kill();
           this.incorrectMeteor2.kill();
           this.correctMeteor.kill();
-          this.textCorreto.kill();
-          this.textErrado1.kill();
-          this.textErrado2.kill();
+          this.correctText.kill();
+          this.incorrectText1.kill();
+          this.incorrectText2.kill();
           this.incorrectAnswerSound.play();
           this.createMeteors();
         } else if (this.meteors.y > 480 && this.vidas <= 0) {
@@ -486,9 +486,9 @@ export const CoreGame = {
 
     moveMeteors: function () {
       this.meteors.y += this.meteorSpeed;
-      this.textCorreto.y += this.meteorSpeed;
-      this.textErrado1.y += this.meteorSpeed;
-      this.textErrado2.y += this.meteorSpeed;
+      this.correctText.y += this.meteorSpeed;
+      this.incorrectText1.y += this.meteorSpeed;
+      this.incorrectText2.y += this.meteorSpeed;
     },
 
     incrementaVelocidade: function () {
@@ -517,9 +517,9 @@ export const CoreGame = {
       this.incorrectMeteor1.kill();
       this.incorrectMeteor2.kill();
 
-      this.textCorreto.kill();
-      this.textErrado1.kill();
-      this.textErrado2.kill();
+      this.correctText.kill();
+      this.incorrectText1.kill();
+      this.incorrectText2.kill();
 
       this.changeQuestion();
       this.createMeteors();
@@ -543,9 +543,9 @@ export const CoreGame = {
       this.correctMeteor.kill()
       this.incorrectMeteor2.kill();
 
-      this.textCorreto.kill();
-      this.textErrado1.kill();
-      this.textErrado2.kill();
+      this.correctText.kill();
+      this.incorrectText1.kill();
+      this.incorrectText2.kill();
 
       this.changeQuestion();
       this.createMeteors();
@@ -567,9 +567,9 @@ export const CoreGame = {
       this.correctMeteor.kill();
       this.incorrectMeteor1.kill();
 
-      this.textCorreto.kill();
-      this.textErrado1.kill();
-      this.textErrado2.kill();
+      this.correctText.kill();
+      this.incorrectText1.kill();
+      this.incorrectText2.kill();
 
       this.changeQuestion();
       this.createMeteors();
